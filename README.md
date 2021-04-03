@@ -1,6 +1,6 @@
-# Grit #
+# Krit #
 
-Grit is an experimental personal task manager that represents tasks as nodes of a [multitree](https://en.wikipedia.org/wiki/Multitree), a class of [directed acyclic graphs](https://en.wikipedia.org/wiki/Directed_acyclic_graph). The structure enables the subdivision of tasks, and supports short-term as well as long-term planning.
+Krit is an experimental personal task manager and CLI-Interace for [Kanboard](http://kanboard.org/) that represents tasks as nodes of a [multitree](https://en.wikipedia.org/wiki/Multitree), a class of [directed acyclic graphs](https://en.wikipedia.org/wiki/Directed_acyclic_graph). The structure enables the subdivision of tasks, and supports short-term as well as long-term planning.
 
 <p align="center">
   <img src="docs/assets/demo.gif" width="683" />
@@ -28,7 +28,7 @@ Grit is an experimental personal task manager that represents tasks as nodes of 
 
 ## Build instructions ##
 
-Make sure `go` (>=1.14) and `gcc` are installed on your system. Get the [latest release](https://github.com/climech/grit/releases), and run:
+Make sure `go` (>=1.14) and `gcc` are installed on your system. Get the [latest release](https://github.com/climech/Krit/releases), and run:
 
 ```
 $ make && sudo make install
@@ -38,7 +38,7 @@ $ make && sudo make install
 
 *(This section is a little technical — you may want to skip over to [Practical guide](#practical-guide) first.)*
 
-Grit's design is based on two premises:
+Krit's design is based on two premises:
 
 1. Breaking a problem up into smaller, more manageable parts is generally a good approach to problem-solving.
 2. Tracking progress across time improves focus by removing the mental overhead associated with many parallel tasks spanning multiple days.
@@ -73,11 +73,11 @@ Multitrees are digraphs, so the nodes are connected to one another by directed l
   <img src="docs/assets/fig1.gif" height="275" />
 </p>
 
-We also get valid *inverted trees* by going in the opposite direction, from nodes to their parents! This property is used by Grit to propagate changes made at the lower levels all the way up to the roots.
+We also get valid *inverted trees* by going in the opposite direction, from nodes to their parents! This property is used by Krit to propagate changes made at the lower levels all the way up to the roots.
 
 ### States
 
-At any given time, a Grit task is said to be in one of the three states:
+At any given time, a Krit task is said to be in one of the three states:
 
 1. `[ ]` *inactive* — task is yet to be completed
 2. `[~]` *in progress* — some of the subtasks have been completed
@@ -96,18 +96,18 @@ A date node is a root node with a special name that follows the standard date fo
 Let's add a few things we want to do today:
 
 ```
-$ grit add Take out the trash
+$ Krit add Take out the trash
 (1) -> (2)
-$ grit add Do the laundry
+$ Krit add Do the laundry
 (1) -> (3)
-$ grit add Call Dad
+$ Krit add Call Dad
 (1) -> (4)
 ```
 
-Run `grit` without arguments to display the current date tree:
+Run `Krit` without arguments to display the current date tree:
 
 ```
-$ grit
+$ Krit
 [ ] 2020-11-10 (1)
  ├──[ ] Call Dad (4)
  ├──[ ] Do the laundry (3)
@@ -117,8 +117,8 @@ $ grit
 So far it looks like an old-fashioned to-do list. We can `check` a task to mark it as completed:
 
 ```
-$ grit check 2
-$ grit
+$ Krit check 2
+$ Krit
 [~] 2020-11-10 (1)
  ├──[ ] Call Dad (4)
  ├──[ ] Do the laundry (3)
@@ -132,25 +132,25 @@ The change is automatically propagated through the graph. We can see that the st
 Let's add another task:
 
 ```
-$ grit add Get groceries
+$ Krit add Get groceries
 (1) -> (5)
 ```
 
 To divide it into subtasks, we have to specify the parent (when no parent is given, `add` defaults to the current date node):
 
 ```
-$ grit add -p 5 Bread
+$ Krit add -p 5 Bread
 (5) -> (6)
-$ grit add -p 5 Milk
+$ Krit add -p 5 Milk
 (5) -> (7)
-$ grit add -p 5 Eggs
+$ Krit add -p 5 Eggs
 (5) -> (8)
 ```
 
 Task 5 is now pointing to subtasks 6, 7 and 8. We can create infinitely many levels, if needed.
 
 ```
-$ grit
+$ Krit
 [~] 2020-11-10 (1)
  ├──[ ] Call Dad (4)
  ├──[ ] Do the laundry (3)
@@ -164,15 +164,15 @@ $ grit
 Check the entire branch:
 
 ```
-$ grit check 5
-$ grit tree 5
+$ Krit check 5
+$ Krit tree 5
  [x] Get groceries (5)
   ├──[x] Bread (6)
   ├──[x] Eggs (8)
   └──[x] Milk (7)
 ```
 
-The `tree` command prints out a tree rooted at the given node. When running `grit` without arguments, `tree` is invoked implicitly, defaulting to the current date node.
+The `tree` command prints out a tree rooted at the given node. When running `Krit` without arguments, `tree` is invoked implicitly, defaulting to the current date node.
 
 ### Roots ###
 
@@ -181,20 +181,20 @@ Some tasks are big—they can't realistically be completed in one day, so we can
 To create a root, run `add` with the `-r` flag:
 
 ```
-$ grit add -r Work through Higher Algebra - Henry S. Hall
+$ Krit add -r Work through Higher Algebra - Henry S. Hall
 (9)
 ```
 
 It's useful to assign aliases to frequently used nodes. An alias is an alternative identifier that can be used in place of a numeric one.
 
 ```
-$ grit alias 9 textbook
+$ Krit alias 9 textbook
 ```
 
 The book contains 35 chapters—adding each of them individually would be very laborious. We can use a Bash loop to make the job easier (a feature like this will probably be added in a future release):
 
 ```
-$ for i in {1..35}; do grit add -p textbook "Chapter $i"; done
+$ for i in {1..35}; do Krit add -p textbook "Chapter $i"; done
 (9) -> (10)
 (9) -> (11)
 ...
@@ -204,11 +204,11 @@ $ for i in {1..35}; do grit add -p textbook "Chapter $i"; done
 Working through a chapter involves reading it and solving all the exercise problems included at the end. Chapter 1 has 28 exercises.
 
 ```
-$ grit add -p 10 Read the chapter
+$ Krit add -p 10 Read the chapter
 (10) -> (45)
-$ grit add -p 10 Solve the exercises
+$ Krit add -p 10 Solve the exercises
 (10) -> (46)
-$ for i in {1..28}; do grit add -p 46 "Solve ex. $i"; done
+$ for i in {1..28}; do Krit add -p 46 "Solve ex. $i"; done
 (46) -> (47)
 (46) -> (48)
 ...
@@ -218,7 +218,7 @@ $ for i in {1..28}; do grit add -p 46 "Solve ex. $i"; done
 Our tree so far:
 
 ```
-$ grit tree textbook
+$ Krit tree textbook
 [ ] Work through Higher Algebra - Henry S. Hall (9:textbook)
  ├──[ ] Chapter 1 (10)
  │   ├──[ ] Read the chapter (45)
@@ -237,7 +237,7 @@ We can do this for each chapter, or leave it for later, building our tree as we 
 Before we proceed, let's run `stat` to see some more information about the node:
 
 ```
-$ grit stat textbook
+$ Krit stat textbook
 
 (9) ───┬─── (10)
        ├─── (11)
@@ -259,15 +259,15 @@ We can confirm that the node is a root—it has no parents. There's a little map
 Say we want to read the first chapter of our Algebra book, and solve a few exercises today. Let's add a new task to the current date node:
 
 ```
-$ grit add Work on ch. 1 of the Algebra textbook
+$ Krit add Work on ch. 1 of the Algebra textbook
 (1) -> (75)
 ```
 
 Create cross links from this node to the relevant `textbook` nodes (the first argument to `link` is the origin, the ones following it are targets):
 
 ```
-$ grit link 75 45 47 48 49
-$ grit
+$ Krit link 75 45 47 48 49
+$ Krit
 [~] 2020-11-10 (1)
  ├──[x] ...
  └──[ ] Work on ch. 1 of the Algebra textbook (75)
@@ -280,7 +280,7 @@ $ grit
 Let's take a closer look at one of them:
 
 ```
-$ grit stat 45
+$ Krit stat 45
 
 (10) ───┐
 (75) ───┴─── (45)
@@ -300,13 +300,13 @@ If we wanted to draw an accurate representation of the whole multitree, it might
   <img src="docs/assets/fig2.png" width="750" />
 </p>
 
-This looks somewhat readable, but attempts to draw a complete representation of a structure even slightly more complex than this typically result in a tangled mess. Because of this, Grit only gives us glimpses of the digraph, one `tree` (or `ls`) at a time. Beyond that it relies on the user to fill in the gaps.
+This looks somewhat readable, but attempts to draw a complete representation of a structure even slightly more complex than this typically result in a tangled mess. Because of this, Krit only gives us glimpses of the digraph, one `tree` (or `ls`) at a time. Beyond that it relies on the user to fill in the gaps.
 
 We can check the nodes and see how the changes propagate through the graph:
 
 ```
-$ grit check 75
-$ grit
+$ Krit check 75
+$ Krit
 [x] 2020-11-10 (1)
  ├──[x] ...
  └──[x] Work on ch. 1 of the algebra textbook (75)
@@ -319,7 +319,7 @@ $ grit
 The nodes are the same, so the change is visible in the textbook tree as well as the date tree:
 
 ```
-$ grit tree textbook
+$ Krit tree textbook
 [~] Work through Higher Algebra - Henry S. Hall (9:textbook)
  ├──[~] Chapter 1 (10)
  │   ├──[x] Read the chapter (45)
@@ -337,15 +337,15 @@ $ grit tree textbook
 We've completed all the tasks for the day, but there's still work to be done under `textbook`. We can schedule more work for tomorrow:
 
 ```
-$ grit add -p 2020-11-11 Work on the algebra textbook
+$ Krit add -p 2020-11-11 Work on the algebra textbook
 (149) -> (150)
-$ grit add -p 150 Solve exercises from ch. 1
+$ Krit add -p 150 Solve exercises from ch. 1
 (149) -> (151)
-$ grit link 151 50 51 52 53 54
-$ grit add -p 150 Work on ch. 2
+$ Krit link 151 50 51 52 53 54
+$ Krit add -p 150 Work on ch. 2
 (149) -> (152)
-$ grit link 152 76 78 79 80
-$ grit tree 2020-11-11
+$ Krit link 152 76 78 79 80
+$ Krit tree 2020-11-11
 [x] 2020-11-10 (149)
  └──[ ] Work on the algebra textbook (150)
      ├──[ ] Solve exercises from ch. 1 (151)
@@ -367,18 +367,18 @@ We can define a *pointer* as a non-task node whose purpose is to link to other n
 
 #### Organizing tasks ####
 
-One aspect where Grit differs from other productivity tools is the lack of tags. This is by choice—Grit is an experiment, and the idea is to solve problems by utilizing the multitree as much as possible.
+One aspect where Krit differs from other productivity tools is the lack of tags. This is by choice—Krit is an experiment, and the idea is to solve problems by utilizing the multitree as much as possible.
 
-How do we organize tasks without tags, then? As we add more and more nodes at the root level, things start to get messy. Running `grit ls` may result in a long list of assorted nodes. The Grit way to solve this is to make pointers.
+How do we organize tasks without tags, then? As we add more and more nodes at the root level, things start to get messy. Running `Krit ls` may result in a long list of assorted nodes. The Krit way to solve this is to make pointers.
 
 For example, if our algebra textbook was just one of many textbooks, we could create a node named "Textbooks" and point it at them:
 
 ```
-$ grit add -r Textbooks
+$ Krit add -r Textbooks
 (420)
-$ grit alias 420 textbooks
-$ grit link textbooks 81 184 349
-$ grit ls textbooks
+$ Krit alias 420 textbooks
+$ Krit link textbooks 81 184 349
+$ Krit ls textbooks
 [~] Calculus - Michael Spivak (184)
 [x] Higher Algebra - Henry S. Hall (81)
 [ ] Linear Algebra - Jim Hefferon (349)
@@ -393,20 +393,20 @@ Note that the same node can be pointed to by an infinite number of nodes, allowi
 A challenge can be a good motivational tool:
 
 ```
-$ grit add -r Read 24 books in 2020
+$ Krit add -r Read 24 books in 2020
 (76)
-$ grit alias 76 rc2020
+$ Krit alias 76 rc2020
 ```
 
 We could simply add books to it as we go, but this wouldn't give us a nice way to track our progress. Let's go a step further and create a pointer (or "slot") for each of the 24 books.
 
 ```
-$ for i in {1..24}; do grit add -p rc2020 "Book $i"; done
+$ for i in {1..24}; do Krit add -p rc2020 "Book $i"; done
 (76) -> (77)
 (76) -> (78)
 ...
 (76) -> (100)
-$ grit tree rc2020
+$ Krit tree rc2020
 [ ] Challenge: Read 24 books in 2020 (76:rc2020)
  ├──[ ] Book 1 (77)
  ├──[ ] Book 2 (78)
@@ -417,11 +417,11 @@ $ grit tree rc2020
 Now, whenever we decide what book we want to read next, we can simply create a new task and link the pointer to it:
 
 ```
-$ grit add 1984 - George Orwell
+$ Krit add 1984 - George Orwell
 (1) -> (101)
-$ grit link 77 101
-$ grit check 101
-$ grit tree rc2020
+$ Krit link 77 101
+$ Krit check 101
+$ Krit tree rc2020
 [~] Challenge: Read 24 books in 2020 (76:rc2020)
  ├──[x] Book 1 (77)
  │   └──[x] 1984 - George Orwell (101)
@@ -431,7 +431,7 @@ $ grit tree rc2020
 The number of leaves remains the same, so `stat` will correctly display our progress:
 
 ```
-$ grit stat rc2020
+$ Krit stat rc2020
 ...
 Status: in progress (1/24)
 ...
@@ -439,7 +439,7 @@ Status: in progress (1/24)
 
 ### More information ###
 
-For more information about specific commands, refer to `grit --help`.
+For more information about specific commands, refer to `Krit --help`.
 
 ## License ##
 
